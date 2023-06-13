@@ -7,6 +7,7 @@ require("./utils/db_connection.js");
 var cors = require('cors')
 
 app.use(cors())
+app.use(bodyparser.urlencoded({ extended: true }));
 
 
 app.get("/home", (req, res) => {

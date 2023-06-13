@@ -32,7 +32,7 @@ module.exports = function (app) {
     //// Admin Login http://localhost:5000/api/mukhya_member/login_mukhya_member
     app.post("/api/mukhya_member/login_mukhya_member", mukhiya_methods.mukhiyaLogin);
     //// Admin Login http://localhost:5000/api/mukhya_member/edit_mukhya_member
-    app.put("/api/mukhya_member/edit_mukhya_member", mukhiya_methods.editMukhiyaDetails);
+    app.put("/api/mukhya_member/edit_mukhya_member", middleware.upload1.single("profile_photo"), mukhiya_methods.editMukhiyaDetails);
     //// Admin Login http://localhost:5000/api/mukhya_member/change_password
     app.put("/api/mukhya_member/change_password", mukhiya_methods.changePassword);
     //// Admin Login http://localhost:5000/api/mukhya_member/fatch_mukhiya_profile

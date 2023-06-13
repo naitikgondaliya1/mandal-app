@@ -10,8 +10,8 @@ require('dotenv').config();
 const { Op } = require("sequelize");
 const { QueryTypes } = require('sequelize');
 const fs = require("fs");
-const { response } = require("express");
-const { ifError } = require("assert");
+// const { response } = require("express");
+// const { ifError } = require("assert");
 
 
 
@@ -46,7 +46,7 @@ const mukhiyaLogin = async (req, res) => {
                 }
                 const password = await bcrypt.hash(mukhiyaDetails.member_password, 10);
 
-                const auth_token = jwt.sign(mukhiyaDetails.mukhiya_id, process.env.SECRET_KEY)
+                const auth_token = jwt.sign(mukhiyaDetails.member_id, process.env.SECRET_KEY)
 
                 await mukhiya.update({
                     member_password: password,
@@ -108,47 +108,145 @@ const editMukhiyaDetails = async (req, res) => {
     if (!auth_token) {
         return res.status(404).send({ status: 0, msg: "auth token not found" });
     }
-    const mukhiyaDetail = await admin.findOne({
+    const mukhiyaDetail = await mukhiya.findOne({
         where: {
             auth_token: auth_token,
         }
     })
+
     if (!mukhiyaDetail) {
         return res.status(203).json({ error: "wrong authenticator" });
     }
 
 
     if (mukhiyaDetail) {
-
         const response = validation.editMukhiyaDetails(req.body)
-
-
-
         if (response.error) {
             return res.status(200).send({ status: 0, msg: response.error.message });
         }
         else {
-
             const data = response.value;
+            // console.log(mukhiyaDetail.business_adress);
+
+            if (req.file) {
+                const random = Math.floor(Math.random() * 10000000);
+                const typeofextention = req.file.filename.slice((Math.max(0, req.file.filename.lastIndexOf(".")) || Infinity) + 1);
+                const mukhiya_id = mukhiyaDetail.mukhiya_id;
+                var file_name = `${mukhiya_id}_${random}_${mukhiya_id}.${typeofextention}`;
+                fs.rename(`./public/mukhiya_profile_image/${req.file.filename}`, `./public/mukhiya_profile_image/${file_name}`, (err) => { })
+                fs.unlink(`.${mukhiyaDetail.mukhiya_profile_photo}`, (err) => { })
+            }
+            if (file_name) {
+                var mukhiya_profile_photo = `/public/mukhiya_profile_image/${file_name}`
+            } else {
+                var mukhiya_profile_photo = mukhiyaDetail.mukhiya_profile_photo
+            }
+
+            if (data.mukhiya_name) {
+                var mukhiya_name = data.mukhiya_name;
+            } else {
+                var mukhiya_name = mukhiyaDetail.mukhiya_name;
+            }
+            if (data.middle_name) {
+                var middle_name = data.middle_name;
+            } else {
+                var middle_name = mukhiyaDetail.middle_name;
+            }
+            if (data.last_name) {
+                var last_name = data.last_name;
+            } else {
+                var last_name = mukhiyaDetail.last_name;
+            }
+            if (data.birth_date) {
+                var birth_date = data.birth_date;
+            } else {
+                var birth_date = mukhiyaDetail.birth_date;
+            }
+            if (data.country_name) {
+                var country_name = data.country_name;
+            } else {
+                var country_name = mukhiyaDetail.country_name;
+            }
+            if (data.city_name) {
+                var city_name = data.city_name;
+            } else {
+                var city_name = mukhiyaDetail.city_name;
+            }
+            if (data.village_name) {
+                var village_name = data.village_name;
+            } else {
+                var village_name = mukhiyaDetail.village_name;
+            }
+            if (data.maternal_village_name) {
+                var maternal_village_name = data.maternal_village_name;
+            } else {
+                var maternal_village_name = mukhiyaDetail.maternal_village_name;
+            }
+            if (data.blood_group) {
+                var blood_group = data.blood_group;
+            } else {
+                var blood_group = mukhiyaDetail.blood_group;
+            }
+            if (data.cast) {
+                var cast = data.cast;
+            } else {
+                var cast = mukhiyaDetail.cast;
+            }
+            if (data.marriage_status) {
+                var marriage_status = data.marriage_status;
+            } else {
+                var marriage_status = mukhiyaDetail.marriage_status;
+            }
+            if (data.education) {
+                var education = data.education;
+            } else {
+                var education = mukhiyaDetail.education;
+            }
+            if (data.bussiness) {
+                var bussiness = data.bussiness;
+            } else {
+                var bussiness = mukhiyaDetail.bussiness;
+            }
+            if (data.social_media_link) {
+                var social_media_link = data.social_media_link;
+            } else {
+                var social_media_link = mukhiyaDetail.social_media_link;
+            }
+            if (data.email) {
+                var email = data.email;
+            } else {
+                var email = mukhiyaDetail.email;
+            }
+            if (data.adress) {
+                var adress = data.adress;
+            } else {
+                var adress = mukhiyaDetail.adress;
+            }
+            if (data.business_adress) {
+                var business_adress = data.business_adress;
+            } else {
+                var business_adress = mukhiyaDetail.business_adress;
+            }
 
             const mukhiyadetail = await mukhiya.update({
-                mukhiya_name: data.mukhiya_name,
-                middle_name: data.middle_name,
-                last_name: data.last_name,
-                birth_date: data.birth_date,
-                country_name: data.country_name,
-                city_name: data.city_name,
-                village_name: data.village_name,
-                maternal_village_name: data.maternal_village_name,
-                blood_group: data.blood_group,
-                cast: data.cast,
-                marriage_status: data.marriage_status,
-                education: data.education,
-                bussiness: data.bussiness,
-                social_media_link: data.social_media_link,
-                email: data.email,
-                adress: data.adress,
-                business_adress: data.business_adress,
+                mukhiya_name: mukhiya_name,
+                middle_name: middle_name,
+                last_name: last_name,
+                birth_date: birth_date,
+                country_name: country_name,
+                city_name: city_name,
+                village_name: village_name,
+                maternal_village_name: maternal_village_name,
+                blood_group: blood_group,
+                cast: cast,
+                marriage_status: marriage_status,
+                education: education,
+                bussiness: bussiness,
+                social_media_link: social_media_link,
+                email: email,
+                adress: adress,
+                business_adress: business_adress,
+                mukhiya_profile_photo: mukhiya_profile_photo,
                 updated_date: Date.now()
             }, {
                 where: {
@@ -240,11 +338,12 @@ const fatchMukhiyaProfile = async (req, res) => {
 }
 
 
+
 module.exports = {
     mukhiyaLogin,
     fatchHeadLine,
     editMukhiyaDetails,
     changePassword,
-    fatchMukhiyaProfile
+    fatchMukhiyaProfile,
 
 }

@@ -1,32 +1,28 @@
 module.exports = (sequelize, DataTypes) => {
 
-    const mukhiya = sequelize.define("mukhiya", {
-        mukhiya_id: {
+    const member_detail = sequelize.define("member_detail", {
+        member_id: {
             type: DataTypes.BIGINT,
             autoIncrement: true,
             primaryKey: true
-        },
-        member_id: {
-            type: DataTypes.TEXT,
-            allowNull: false,
-        },
-        mukhiya_mobile_no: {
-            type: DataTypes.BIGINT,
-            allowNull: false,
-        },
-        member_password: {
-            type: DataTypes.TEXT,
-            allowNull: false,
         },
         auth_token: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
-        mukhiya_profile_photo: {
+        mukhiya_member_id: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        member_mobile_no: {
+            type: DataTypes.BIGINT,
+            allowNull: false,
+        },
+        member_profile_photo: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
-        mukhiya_name: {
+        member_name: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
@@ -108,5 +104,5 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         }
     }, { timestamps: false })
-    return mukhiya
+    return member_detail
 }

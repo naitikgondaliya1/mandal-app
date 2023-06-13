@@ -25,6 +25,8 @@ db.admin = require("../models/admin.js")(sequelize, DataTypes);
 db.admin_headline = require("../models/admin_headline.js")(sequelize, DataTypes);
 db.mukhiya = require("../models/mukhiya.js")(sequelize, DataTypes);
 db.slider = require("../models/slider.js")(sequelize, DataTypes);
+db.member_detail = require("../models/member.js")(sequelize, DataTypes);
+
 
 
 
