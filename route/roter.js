@@ -37,6 +37,7 @@ module.exports = function (app) {
     app.put("/api/mukhya_member/change_password", mukhiya_methods.changePassword);
     //// Admin Login http://localhost:5000/api/mukhya_member/fatch_mukhiya_profile
     app.get("/api/mukhya_member/fatch_mukhiya_profile", mukhiya_methods.fatchMukhiyaProfile);
-
+    //// Admin Login http://localhost:5000/api/mukhya_member/add_member_details
+    app.post("/api/mukhya_member/add_member_details", middleware.upload2.single("profile_photo"), mukhiya_methods.addMembarDetails);
 
 }

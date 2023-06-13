@@ -176,7 +176,80 @@ function changePassword(memberData) {
 }
 
 
+function addMembarDetails(memberData) {
+    const memberDetails =
+        joi.object({
+            member_mobile_no: joi.number()
+                .integer()
+                .min(10 ** 9)
+                .max(10 ** 10 - 1),
+            member_name: joi.string()
+                .trim()
+                .min(1)
+                .required(),
+            middle_name: joi.string()
+                .trim()
+                .min(1)
+                .required(),
+            last_name: joi.string()
+                .trim()
+                .min(1)
+                .required(),
+            birth_date: joi.date()
+                .raw()
+                .required(),
+            country_name: joi.string()
+                .trim()
+                .min(1)
+                .required(),
+            city_name: joi.string()
+                .trim()
+                .min(1)
+                .required(),
+            village_name: joi.string()
+                .trim()
+                .min(1)
+                .required(),
+            maternal_village_name: joi.string()
+                .trim()
+                .min(1)
+                .required(),
+            blood_group: joi.string()
+                .trim()
+                .min(1)
+                .required(),
+            cast: joi.string()
+                .trim()
+                .min(1)
+                .required(),
+            marriage_status: joi.string()
+                .trim()
+                .min(1)
+                .required(),
+            education: joi.string()
+                .trim()
+                .min(1)
+                .required(),
+            bussiness: joi.string()
+                .trim()
+                .min(0),
+            social_media_link: joi.string()
+                .trim()
+                .min(0),
+            email: joi.string()
+                .email()
+                .required(),
+            adress: joi.string()
+                .trim()
+                .min(1)
+                .required(),
+            business_adress: joi.string()
+                .trim()
+                .min(0)
+        })
 
+    return memberDetails.validate(memberData)
+}
 
 
 module.exports = {
@@ -186,5 +259,6 @@ module.exports = {
     mukhiyaLogin,
     editMember,
     editMukhiyaDetails,
-    changePassword
+    changePassword,
+    addMembarDetails
 }

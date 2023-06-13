@@ -3,6 +3,7 @@ const admin = db.admin;
 const admin_headline = db.admin_headline;
 const mukhiya = db.mukhiya;
 const slider = db.slider;
+const member_detail = db.member_detail;
 const bcrypt = require("bcryptjs");
 const validation = require("../validation/validation.js");
 const jwt = require("jsonwebtoken");
@@ -10,6 +11,7 @@ require('dotenv').config();
 const { Op } = require("sequelize");
 const { QueryTypes } = require('sequelize');
 const fs = require("fs");
+const member = require("../models/member.js");
 // const { response } = require("express");
 // const { ifError } = require("assert");
 
@@ -337,6 +339,89 @@ const fatchMukhiyaProfile = async (req, res) => {
     }
 }
 
+const addMembarDetails = async (req, res) => {
+    const memberDetails = req.body;
+    var auth_token = req.headers['auth-token'];
+
+
+    if (!auth_token) {
+        return res.status(404).send({ status: 0, msg: "auth token not found" });
+    }
+    const mukhiyaDetail = await mukhiya.findOne({
+        where: {
+            auth_token: auth_token,
+        }
+    })
+
+    if (!mukhiyaDetail) {
+        return res.status(203).json({ error: "wrong authenticator" });
+    }
+
+
+    if (mukhiyaDetail) {
+        const response = validation.addMembarDetails(req.body)
+        if (response.error) {
+            return res.status(200).send({ status: 0, msg: response.error.message });
+        }
+        else {
+            const data = response.value;
+            console.log(mukhiyaDetail.business_adress);
+            const memberdetail = await member_detail.create({
+                mukhiya_auth_token: mukhiyaDetail.auth_token,
+                mukhiya_member_id: mukhiyaDetail.member_id,
+                member_name: data.member_name,
+                member_mobile_no: data.member_mobile_no,
+                middle_name: data.middle_name,
+                last_name: data.last_name,
+                birth_date: data.birth_date,
+                country_name: data.country_name,
+                city_name: data.city_name,
+                village_name: data.village_name,
+                maternal_village_name: data.maternal_village_name,
+                blood_group: data.blood_group,
+                cast: data.cast,
+                marriage_status: data.marriage_status,
+                education: data.education,
+                bussiness: data.bussiness,
+                social_media_link: data.social_media_link,
+                email: data.email,
+                adress: data.adress,
+                business_adress: data.business_adress,
+                is_deleted: 0,
+                created_date: Date.now(),
+                updated_date: Date.now()
+            })
+
+            if (req.file) {
+                const random = Math.floor(Math.random() * 10000000);
+                const typeofextention = req.file.filename.slice((Math.max(0, req.file.filename.lastIndexOf(".")) || Infinity) + 1);
+                const member_id = memberdetail.member_id;
+                var file_name = `${member_id}_${random}_${member_id}.${typeofextention}`;
+                fs.rename(`./public/member_profile_image/${req.file.filename}`, `./public/member_profile_image/${file_name}`, (err) => { })
+            }
+
+            const mukhiyadetail = await member_detail.update({
+                member_profile_photo: `./public/member_profile_image/${file_name}`,
+                updated_date: Date.now()
+            }, {
+                where: {
+                    member_id: memberdetail.member_id,
+                }
+            })
+            const memberData = await member_detail.findOne({
+                where: {
+                    member_id: memberdetail.member_id,
+                }
+            })
+
+
+            res.status(200).send({ status: 1, msg: "add member details successfull", data: memberData });
+
+        }
+
+    }
+}
+
 
 
 module.exports = {
@@ -345,5 +430,6 @@ module.exports = {
     editMukhiyaDetails,
     changePassword,
     fatchMukhiyaProfile,
+    addMembarDetails
 
 }

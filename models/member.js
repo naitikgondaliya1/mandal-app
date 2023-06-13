@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             primaryKey: true
         },
-        auth_token: {
+        mukhiya_auth_token: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
