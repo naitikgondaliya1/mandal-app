@@ -35,6 +35,8 @@ module.exports = function (app) {
     app.put("/api/mukhya_member/edit_mukhya_member", mukhiya_methods.editMukhiyaDetails);
     //// Admin Login http://localhost:5000/api/mukhya_member/change_password
     app.put("/api/mukhya_member/change_password", mukhiya_methods.changePassword);
+    //// Admin Login http://localhost:5000/api/mukhya_member/fatch_mukhiya_profile
+    app.get("/api/mukhya_member/fatch_mukhiya_profile", mukhiya_methods.fatchMukhiyaProfile);
 
 
 }

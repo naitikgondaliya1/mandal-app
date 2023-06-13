@@ -213,11 +213,37 @@ const changePassword = async (req, res) => {
 
 }
 
+const fatchMukhiyaProfile = async (req, res) => {
+    const auth_token = req.headers['auth-token'];
+
+    if (!auth_token) {
+        return res.status(404).send({ status: 0, msg: "auth token not found" });
+    }
+    try {
+        const mukhiyaDetails = await mukhiya.findOne({
+            where: {
+                auth_token: auth_token,
+            }
+        })
+        if (!mukhiyaDetails) {
+            return res.status(203).json({ error: "wrong authenticator" });
+        } else {
+            res.status(200).send({ status: 1, msg: "head line detail", data: mukhiyaDetails });
+        }
+
+
+
+    } catch (error) {
+        res.status(500).send("Internal Server Error");
+    }
+}
+
 
 module.exports = {
     mukhiyaLogin,
     fatchHeadLine,
     editMukhiyaDetails,
-    changePassword
+    changePassword,
+    fatchMukhiyaProfile
 
 }
