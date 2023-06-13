@@ -599,6 +599,49 @@ const editMemberDetails = async (req, res) => {
     }
 }
 
+const removeMemberById = async (req, res) => {
+    const auth_token = req.headers['auth-token'];
+    const member_id = req.params.id;
+    if (!auth_token) {
+        return res.status(404).send({ status: 0, msg: "auth token not found" });
+    }
+    try {
+        const mukhiyaDetail = await mukhiya.findOne({
+            where: {
+                auth_token: auth_token,
+            }
+        })
+        if (!mukhiyaDetail) {
+            return res.status(203).json({ error: "wrong authenticator" });
+        } else {
+            const memberDetail = await member_detail.findOne({
+                where: {
+                    member_id: member_id
+                }
+            })
+
+            if (!memberDetail) {
+                return res.status(404).json({ error: "please enter valid member id" });
+            } else {
+                const remove_member = await member_detail.destroy({
+                    where: {
+                        member_id: memberDetail.member_id
+                    }
+                })
+
+                if (remove_member) {
+                    res.status(200).send({ status: 1, msg: "member remove successfully" });
+                } else {
+                    res.status(400).send({ status: 1, msg: "member not remove" });
+
+                }
+            }
+        }
+
+    } catch (error) {
+        res.status(500).send("Internal Server Error");
+    }
+}
 
 module.exports = {
     mukhiyaLogin,
@@ -607,6 +650,7 @@ module.exports = {
     changePassword,
     fatchMukhiyaProfile,
     addMembarDetails,
-    editMemberDetails
+    editMemberDetails,
+    removeMemberById
 
 }
