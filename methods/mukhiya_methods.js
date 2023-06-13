@@ -41,14 +41,15 @@ const mukhiyaLogin = async (req, res) => {
                     return res.status(404).json({ error: "User does not found" });
                 }
 
-                const password = await bcrypt.compare(data.member_password, mukhiyaDetails.member_password);
-                if (password == false) {
+                if (data.member_password != mukhiyaDetails.member_password) {
                     return res.status(404).json({ error: "Invalide password" });
                 }
+                const password = await bcrypt.hash(mukhiyaDetails.member_password, 10);
 
                 const auth_token = jwt.sign(mukhiyaDetails.mukhiya_id, process.env.SECRET_KEY)
 
                 await mukhiya.update({
+                    member_password: password,
                     auth_token: auth_token
                 }, {
                     where: {

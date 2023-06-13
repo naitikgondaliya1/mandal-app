@@ -206,12 +206,11 @@ const creatMember = async (req, res) => {
                 return res.status(400).json({ error: 'User Id already exist' })
             }
 
-            const password = await bcrypt.hash(data.password, 10);
 
             const member = await mukhiya.create({
                 member_id: data.member_id,
                 mukhiya_mobile_no: data.mukhiya_mobile_no,
-                member_password: password,
+                member_password: data.password,
                 is_deleted: 0,
                 created_date: Date.now(),
                 updated_date: Date.now()
@@ -398,11 +397,9 @@ const editMember = async (req, res) => {
         else {
 
             const data = response.value;
-            console.log(data);
-
 
             if (data.member_password) {
-                var password = await bcrypt.hash(data.member_password, 10);
+                var password = data.member_password;
             } else {
                 var password = memberDetail.member_password;
             }
