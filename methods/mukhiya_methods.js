@@ -401,7 +401,7 @@ const addMembarDetails = async (req, res) => {
             }
 
             const mukhiyadetail = await member_detail.update({
-                member_profile_photo: `./public/member_profile_image/${file_name}`,
+                member_profile_photo: `/public/member_profile_image/${file_name}`,
                 updated_date: Date.now()
             }, {
                 where: {
@@ -422,6 +422,182 @@ const addMembarDetails = async (req, res) => {
     }
 }
 
+const editMemberDetails = async (req, res) => {
+    const memberDetails = req.body;
+    var auth_token = req.headers['auth-token'];
+
+
+    if (!auth_token) {
+        return res.status(404).send({ status: 0, msg: "auth token not found" });
+    }
+    const mukhiyaDetail = await mukhiya.findOne({
+        where: {
+            auth_token: auth_token,
+        }
+    })
+
+    if (!mukhiyaDetail) {
+        return res.status(203).json({ error: "wrong authenticator" });
+    }
+
+    if (mukhiyaDetail) {
+        const response = validation.editMemberDetails(req.body)
+        if (response.error) {
+            return res.status(200).send({ status: 0, msg: response.error.message });
+        }
+        else {
+            const data = response.value;
+            const memberDetail = await member_detail.findOne({
+                where: {
+                    member_id: data.member_id,
+                }
+            })
+
+            if (!memberDetail) {
+                return res.status(404).send({ status: 0, msg: "member not found" });
+            } else {
+                if (req.file) {
+                    const random = Math.floor(Math.random() * 10000000);
+                    const typeofextention = req.file.filename.slice((Math.max(0, req.file.filename.lastIndexOf(".")) || Infinity) + 1);
+                    const member_id = memberDetail.member_id;
+                    var file_name = `${member_id}_${random}_${member_id}.${typeofextention}`;
+                    fs.rename(`./public/member_profile_image/${req.file.filename}`, `./public/member_profile_image/${file_name}`, (err) => { })
+                    fs.unlink(`.${memberDetail.member_profile_photo}`, (err) => { })
+                }
+                if (file_name) {
+                    var member_profile_photo = `/public/member_profile_image/${file_name}`
+                } else {
+                    var member_profile_photo = memberDetail.member_profile_photo
+                }
+                if (data.member_mobile_no) {
+                    var member_mobile_no = data.member_mobile_no;
+                } else {
+                    var member_mobile_no = memberDetail.member_mobile_no;
+                }
+                if (data.member_name) {
+                    var member_name = data.member_name;
+                } else {
+                    var member_name = memberDetail.member_name;
+                }
+                if (data.middle_name) {
+                    var middle_name = data.middle_name;
+                } else {
+                    var middle_name = memberDetail.middle_name;
+                }
+                if (data.last_name) {
+                    var last_name = data.last_name;
+                } else {
+                    var last_name = memberDetail.last_name;
+                }
+                if (data.birth_date) {
+                    var birth_date = data.birth_date;
+                } else {
+                    var birth_date = memberDetail.birth_date;
+                }
+                if (data.country_name) {
+                    var country_name = data.country_name;
+                } else {
+                    var country_name = memberDetail.country_name;
+                }
+                if (data.city_name) {
+                    var city_name = data.city_name;
+                } else {
+                    var city_name = memberDetail.city_name;
+                }
+                if (data.village_name) {
+                    var village_name = data.village_name;
+                } else {
+                    var village_name = memberDetail.village_name;
+                }
+                if (data.maternal_village_name) {
+                    var maternal_village_name = data.maternal_village_name;
+                } else {
+                    var maternal_village_name = memberDetail.maternal_village_name;
+                }
+                if (data.blood_group) {
+                    var blood_group = data.blood_group;
+                } else {
+                    var blood_group = memberDetail.blood_group;
+                }
+                if (data.cast) {
+                    var cast = data.cast;
+                } else {
+                    var cast = memberDetail.cast;
+                }
+                if (data.marriage_status) {
+                    var marriage_status = data.marriage_status;
+                } else {
+                    var marriage_status = memberDetail.marriage_status;
+                }
+                if (data.education) {
+                    var education = data.education;
+                } else {
+                    var education = memberDetail.education;
+                }
+                if (data.bussiness) {
+                    var bussiness = data.bussiness;
+                } else {
+                    var bussiness = memberDetail.bussiness;
+                }
+                if (data.social_media_link) {
+                    var social_media_link = data.social_media_link;
+                } else {
+                    var social_media_link = memberDetail.social_media_link;
+                }
+                if (data.email) {
+                    var email = data.email;
+                } else {
+                    var email = memberDetail.email;
+                }
+                if (data.adress) {
+                    var adress = data.adress;
+                } else {
+                    var adress = memberDetail.adress;
+                }
+                if (data.business_adress) {
+                    var business_adress = data.business_adress;
+                } else {
+                    var business_adress = memberDetail.business_adress;
+                }
+
+                const mukhiyadetail = await member_detail.update({
+                    member_mobile_no: member_mobile_no,
+                    member_name: member_name,
+                    middle_name: middle_name,
+                    last_name: last_name,
+                    birth_date: birth_date,
+                    country_name: country_name,
+                    city_name: city_name,
+                    village_name: village_name,
+                    maternal_village_name: maternal_village_name,
+                    blood_group: blood_group,
+                    cast: cast,
+                    marriage_status: marriage_status,
+                    education: education,
+                    bussiness: bussiness,
+                    social_media_link: social_media_link,
+                    email: email,
+                    adress: adress,
+                    business_adress: business_adress,
+                    member_profile_photo: member_profile_photo,
+                    updated_date: Date.now()
+                }, {
+                    where: {
+                        member_id: data.member_id,
+                    }
+                })
+
+                const memberData = await member_detail.findOne({
+                    where: {
+                        member_id: data.member_id,
+                    }
+                })
+                res.status(200).send({ status: 1, msg: "edit member details successfull", data: memberData });
+            }
+        }
+
+    }
+}
 
 
 module.exports = {
@@ -430,6 +606,7 @@ module.exports = {
     editMukhiyaDetails,
     changePassword,
     fatchMukhiyaProfile,
-    addMembarDetails
+    addMembarDetails,
+    editMemberDetails
 
 }
