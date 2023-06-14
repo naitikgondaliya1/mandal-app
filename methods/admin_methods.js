@@ -314,11 +314,7 @@ const fatchAllSliderImages = async (req, res) => {
       const sliderImageData = await slider.findAll({});
       res
         .status(200)
-        .send({
-          status: 1,
-          msg: "slider images detail",
-          data: sliderImageData,
-        });
+        .send(sliderImageData);
     }
   } catch (error) {
     res.status(500).send("Internal Server Error");
