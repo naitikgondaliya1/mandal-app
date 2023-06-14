@@ -43,21 +43,31 @@ const mukhiyaLogin = async (req, res) => {
                     return res.status(404).json({ error: "User does not found" });
                 }
 
-                if (data.member_password != mukhiyaDetails.member_password) {
-                    return res.status(404).json({ error: "Invalide password" });
-                }
-                const password = await bcrypt.hash(mukhiyaDetails.member_password, 10);
+                if (mukhiyaDetails.auth_token == null) {
+                    if (data.member_password == mukhiyaDetails.member_password) {
+                        var password = await bcrypt.hash(mukhiyaDetails.member_password, 10);
 
-                const auth_token = jwt.sign(mukhiyaDetails.member_id, process.env.SECRET_KEY)
+                        const auth_token = jwt.sign(mukhiyaDetails.member_id, process.env.SECRET_KEY)
 
-                await mukhiya.update({
-                    member_password: password,
-                    auth_token: auth_token
-                }, {
-                    where: {
-                        mukhiya_id: mukhiyaDetails.mukhiya_id,
+                        await mukhiya.update({
+                            member_password: password,
+                            auth_token: auth_token
+                        }, {
+                            where: {
+                                mukhiya_id: mukhiyaDetails.mukhiya_id,
+                            }
+                        })
+
+                    } else {
+                        return res.status(404).json({ error: "Invalide password" });
                     }
-                })
+                } else {
+                    var password = await bcrypt.compare(data.member_password, mukhiyaDetails.member_password);
+                    if (!password) {
+                        return res.status(404).json({ error: "Invalide password" });
+                    }
+                }
+
 
                 const mukhiyaData = await mukhiya.findOne({
                     where: {
@@ -68,8 +78,8 @@ const mukhiyaLogin = async (req, res) => {
 
 
                 res.status(200).send({ status: 1, msg: "login successfull", data: mukhiyaData });
-
             }
+
         } catch (error) {
             res.status(500).send("Internal Server Error");
         }
