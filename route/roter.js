@@ -19,7 +19,7 @@ module.exports = function (app) {
     //// Admin Login http://localhost:5000/api/slider/add_slider_img
     app.post("/api/slider/add_slider_img", middleware.upload.single("image"), admin_methods.addsliderImage);
     //// Admin Login http://localhost:5000/api/slider/fetch_all_slider_imgs
-    app.post("/api/slider/fetch_all_slider_imgs", admin_methods.fatchAllSliderImages);
+    app.get("/api/slider/fetch_all_slider_imgs", admin_methods.fatchAllSliderImages);
     //// Admin Login http://localhost:5000/api/slider/delete_slider_img/:id
     app.delete("/api/slider/delete_slider_img/:id", admin_methods.deleteSliderImageById);
     //// Admin Login http://localhost:5000/api/slider/admin/edit_mukhya_member/:id
@@ -45,4 +45,6 @@ module.exports = function (app) {
     app.delete("/api/slider/remove_member/:id", mukhiya_methods.removeMemberById);
     //// Admin Login http://localhost:5000/api/headline/mukhiya_fatch_headline
     app.get("/api/headline/mukhiya_fatch_headline", mukhiya_methods.mukhiyafatchHeadLine);
+    //// Admin Login http://localhost:5000/api/slider/mukhiya_fatch_all_slider_imgs
+    app.get("/api/slider/mukhiya_fatch_all_slider_imgs", mukhiya_methods.mukhiyafatchAllSliderImages);
 }

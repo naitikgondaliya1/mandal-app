@@ -745,6 +745,30 @@ const removeMemberById = async (req, res) => {
     }
 };
 
+const mukhiyafatchAllSliderImages = async (req, res) => {
+    const auth_token = req.headers["auth-token"];
+    if (!auth_token) {
+        return res.status(404).send({ status: 0, msg: "auth token not found" });
+    }
+    try {
+        const adminDetail = await mukhiya.findOne({
+            where: {
+                auth_token: auth_token,
+            },
+        });
+        if (!adminDetail) {
+            return res.status(203).json({ error: "wrong authenticator" });
+        } else {
+            const sliderImageData = await slider.findAll({});
+            res
+                .status(200)
+                .send(sliderImageData);
+        }
+    } catch (error) {
+        res.status(500).send("Internal Server Error");
+    }
+};
+
 module.exports = {
     mukhiyaLogin,
     mukhiyafatchHeadLine,
@@ -754,4 +778,5 @@ module.exports = {
     addMembarDetails,
     editMemberDetails,
     removeMemberById,
+    mukhiyafatchAllSliderImages,
 };
