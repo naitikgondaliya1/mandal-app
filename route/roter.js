@@ -43,4 +43,6 @@ module.exports = function (app) {
     app.put("/api/mukhya_member/edit_member_details", middleware.upload2.single("profile_photo"), mukhiya_methods.editMemberDetails);
     //// Admin Login http://localhost:5000/api/slider/remove_member/:id
     app.delete("/api/slider/remove_member/:id", mukhiya_methods.removeMemberById);
+    //// Admin Login http://localhost:5000/api/headline/mukhiya_fatch_headline
+    app.get("/api/headline/mukhiya_fatch_headline", mukhiya_methods.mukhiyafatchHeadLine);
 }
