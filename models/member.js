@@ -92,7 +92,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
         },
         is_deleted: {
-            type: DataTypes.BOOLEAN,
+            type: DataTypes.BIGINT,
             defaultValue: 0,
         },
         created_date: {

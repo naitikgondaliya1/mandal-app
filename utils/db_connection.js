@@ -1,16 +1,25 @@
 const { Sequelize, DataTypes } = require("sequelize")
 
-const sequelize = new Sequelize("mandal", "root", "", {
-    host: "localhost",
-    dialect: "mysql",
-    logging: false
-})
+const sequelize = new Sequelize({
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    username: process.env.DB_USER_NAME,
+    password: process.env.DB_PASSWORD,
+    dialect: "postgres",
+    port: process.env.DB_PORT,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+  });
 
 try {
     sequelize.authenticate()
     console.log("database connection success")
 } catch (error) {
-    console.log(error)
+    console.log("=====>>>>",error)
 }
 
 
@@ -26,11 +35,6 @@ db.admin_headline = require("../models/admin_headline.js")(sequelize, DataTypes)
 db.mukhiya = require("../models/mukhiya.js")(sequelize, DataTypes);
 db.slider = require("../models/slider.js")(sequelize, DataTypes);
 db.member_detail = require("../models/member.js")(sequelize, DataTypes);
-
-
-
-
-
 
 sequelize.sync({ force: false, alter: true })
 
