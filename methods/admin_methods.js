@@ -28,11 +28,12 @@ const adminLogin = async (req, res) => {
         // const password = await bcrypt.hash(data.password, 10);
         // console.log(password); $2a$10$s2L3vc0ZJoO1bOamXocUjurkB75jmZLzS3p5DtNu8AQIcN.dRTrvC
 
-        const adminDetail = await admin.findOne({
+        let adminDetail = await admin.findOne({
           where: {
             mobile_no: data.mobile_no,
           },
         });
+        adminDetail = adminDetail?.dataValues ? adminDetail?.dataValues : null
         if (!adminDetail) {
           return res
             .status(404)
@@ -64,12 +65,13 @@ const adminLogin = async (req, res) => {
           }
         );
 
-        const userData = await admin.findOne({
+        let userData = await admin.findOne({
           where: {
             mobile_no: data.mobile_no,
           },
           attributes: ["auth_token"],
         });
+        userData = userData.dataValues ? userData.dataValues : null
         res
           .status(200)
           .send({ status: 1, msg: "login successfull", data: userData });
@@ -97,20 +99,23 @@ const editHeadLine = async (req, res) => {
       } else {
         const data = response.value;
 
-        const adminDetail = await admin.findOne({
+        let adminDetail = await admin.findOne({
           where: {
             auth_token: auth_token,
           },
         });
+        adminDetail = adminDetail.dataValues ? adminDetail.dataValues : null
         if (!adminDetail) {
           return res.status(203).json({ error: "wrong authenticator" });
         }
 
-        const headLineDetail = await admin_headline.findOne({
+        let headLineDetail = await admin_headline.findOne({
           where: {
             admin_headline_id: headLineID,
           },
         });
+        headLineDetail = headLineDetail.dataValues ? headLineDetail.dataValues : null
+
 
         if (!headLineDetail) {
           return res.status(404).json({ error: "HeadLine not found" });
@@ -126,11 +131,12 @@ const editHeadLine = async (req, res) => {
             }
           );
 
-          const headLineData = await admin_headline.findOne({
+          let headLineData = await admin_headline.findOne({
             where: {
               admin_headline_id: headLineID,
             },
           });
+          headLineData = headLineData.dataValues ? headLineData.dataValues : null
 
           res
             .status(200)
@@ -154,15 +160,18 @@ const fatchHeadLine = async (req, res) => {
     return res.status(404).send({ status: 0, msg: "auth token not found" });
   }
   try {
-    const adminDetail = await admin.findOne({
+    let adminDetail = await admin.findOne({
       where: {
         auth_token: auth_token,
       },
     });
+    adminDetail = adminDetail.dataValues ? adminDetail.dataValues : null
+
     if (!adminDetail) {
       return res.status(203).json({ error: "wrong authenticator" });
     } else {
-      const headLineData = await admin_headline.findAll({});
+      let headLineData = await admin_headline.findAll({});
+      headLineData = headLineData.dataValues ? headLineData.dataValues : null
       res
         .status(200)
         .send({ status: 1, msg: "head line detail", data: headLineData });
@@ -179,11 +188,12 @@ const creatMember = async (req, res) => {
   if (!auth_token) {
     return res.status(404).send({ status: 0, msg: "auth token not found" });
   }
-  const adminDetail = await admin.findOne({
+  let adminDetail = await admin.findOne({
     where: {
       auth_token: auth_token,
     },
   });
+  adminDetail = adminDetail.dataValues ? adminDetail.dataValues : null
   if (!adminDetail) {
     return res.status(203).json({ error: "wrong authenticator" });
   }
@@ -196,22 +206,26 @@ const creatMember = async (req, res) => {
     } else {
       const data = response.value;
 
-      const mobile = await mukhiya.findOne({
+      let mobile = await mukhiya.findOne({
         where: {
           mukhiya_mobile_no: data.mukhiya_mobile_no,
         },
       });
+      mobile = mobile.dataValues ? mobile.dataValues : null
+
       if (mobile) {
         return res
           .status(400)
           .json({ error: "User Mobile number already exist" });
       }
 
-      const memberID = await mukhiya.findOne({
+      let memberID = await mukhiya.findOne({
         where: {
           member_id: data.member_id,
         },
       });
+      memberID = memberID.dataValues ? memberID.dataValues : null
+
       if (memberID) {
         return res.status(400).json({ error: "User Id already exist" });
       }
@@ -225,12 +239,13 @@ const creatMember = async (req, res) => {
         updated_date: Date.now(),
       });
 
-      const memberdata = await mukhiya.findOne({
+      let memberdata = await mukhiya.findOne({
         where: {
           mukhiya_mobile_no: data.mukhiya_mobile_no,
           member_id: data.member_id,
         },
       });
+      memberdata = memberdata.dataValues ? memberdata.dataValues : null
 
       res
         .status(200)
@@ -250,11 +265,13 @@ const addsliderImage = async (req, res) => {
     return res.status(404).send({ status: 0, msg: "auth token not found" });
   }
   if (auth_token) {
-    var adminDetail = await admin.findOne({
+    let adminDetail = await admin.findOne({
       where: {
         auth_token: auth_token,
       },
     });
+    adminDetail = adminDetail.dataValues ? adminDetail.dataValues : null
+
 
     if (!adminDetail) {
       fs.unlink(`./public/slider_images/${req.file.filename}`, (err) => {});
@@ -282,11 +299,12 @@ const addsliderImage = async (req, res) => {
       updated_date: Date.now(),
     });
 
-    const sliderImageData = await slider.findOne({
+    let sliderImageData = await slider.findOne({
       where: {
         slider_id: sliderImage.slider_id,
       },
     });
+    sliderImageData = sliderImageData.dataValues ? sliderImageData.dataValues : null
 
     res
       .status(200)
@@ -303,15 +321,19 @@ const fatchAllSliderImages = async (req, res) => {
     return res.status(404).send({ status: 0, msg: "auth token not found" });
   }
   try {
-    const adminDetail = await admin.findOne({
+    let adminDetail = await admin.findOne({
       where: {
         auth_token: auth_token,
       },
     });
+    adminDetail = adminDetail.dataValues ? adminDetail.dataValues : null
+
     if (!adminDetail) {
       return res.status(203).json({ error: "wrong authenticator" });
     } else {
-      const sliderImageData = await slider.findAll({});
+      let sliderImageData = await slider.findAll({});
+      sliderImageData = sliderImageData.dataValues ? sliderImageData.dataValues : null
+
       res
         .status(200)
         .send(sliderImageData);
@@ -328,19 +350,23 @@ const deleteSliderImageById = async (req, res) => {
     return res.status(404).send({ status: 0, msg: "auth token not found" });
   }
   try {
-    const adminDetail = await admin.findOne({
+    let adminDetail = await admin.findOne({
       where: {
         auth_token: auth_token,
       },
     });
+    adminDetail = adminDetail.dataValues ? adminDetail.dataValues : null
+
     if (!adminDetail) {
       return res.status(203).json({ error: "wrong authenticator" });
     } else {
-      const sliderImageDetail = await slider.findOne({
+      let sliderImageDetail = await slider.findOne({
         where: {
           slider_id: slider_id,
         },
       });
+      sliderImageDetail = sliderImageDetail.dataValues ? sliderImageDetail.dataValues : null
+
 
       if (!sliderImageDetail) {
         return res.status(404).json({ error: "please enter valid image id" });
@@ -376,20 +402,23 @@ const editMember = async (req, res) => {
   if (!auth_token) {
     return res.status(404).send({ status: 0, msg: "auth token not found" });
   }
-  const adminDetail = await admin.findOne({
+  let adminDetail = await admin.findOne({
     where: {
       auth_token: auth_token,
     },
   });
+  adminDetail = adminDetail.dataValues ? adminDetail.dataValues : null
+
   if (!adminDetail) {
     return res.status(203).json({ error: "wrong authenticator" });
   }
 
-  const memberDetail = await mukhiya.findOne({
+  let memberDetail = await mukhiya.findOne({
     where: {
       mukhiya_id: mukhiya_id,
     },
   });
+  memberDetail = memberDetail.dataValues ? memberDetail.dataValues : null
 
   if (!memberDetail) {
     return res
@@ -430,11 +459,12 @@ const editMember = async (req, res) => {
         }
       );
 
-      const memberdata = await mukhiya.findOne({
+      let memberdata = await mukhiya.findOne({
         where: {
           mukhiya_id: mukhiya_id,
         },
       });
+      memberdata = memberdata.dataValues ? memberdata.dataValues : null
 
       res
         .status(200)
@@ -453,15 +483,19 @@ const fatchAllMembers = async (req, res) => {
     return res.status(404).send({ status: 0, msg: "auth token not found" });
   }
   try {
-    const adminDetail = await admin.findOne({
+    let adminDetail = await admin.findOne({
       where: {
         auth_token: auth_token,
       },
     });
+    adminDetail = adminDetail.dataValues ? adminDetail.dataValues : null
+
     if (!adminDetail) {
       return res.status(203).json({ error: "wrong authenticator" });
     } else {
-      const memberData = await mukhiya.findAll({});
+      let memberData = await mukhiya.findAll({});
+      memberData = memberData.dataValues ? memberData.dataValues : null
+
       res.status(200).send(memberData);
     }
   } catch (error) {

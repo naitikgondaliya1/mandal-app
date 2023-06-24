@@ -89,11 +89,13 @@ const mukhiyaLogin = async (req, res) => {
                 return res.status(200).send({ status: 0, msg: response.error.message });
             } else {
                 const data = response.value;
-                const mukhiyaDetails = await mukhiya.findOne({
+                let mukhiyaDetails = await mukhiya.findOne({
                     where: {
                         member_id: data.member_id,
                     },
                 });
+                mukhiyaDetails = mukhiyaDetails.dataValues ? mukhiyaDetails.dataValues : null
+
                 if (!mukhiyaDetails) {
                     return res.status(404).json({ error: "User does not found" });
                 }
@@ -130,12 +132,14 @@ const mukhiyaLogin = async (req, res) => {
                         return res.status(404).json({ error: "Invalide password" });
                     }
                 }
-                const mukhiyaData = await mukhiya.findOne({
+                let mukhiyaData = await mukhiya.findOne({
                     where: {
                         mukhiya_id: mukhiyaDetails.mukhiya_id,
                     },
                     attributes: ["auth_token"],
                 });
+                mukhiyaData = mukhiyaData.dataValues ? mukhiyaData.dataValues : null
+
                 res
                     .status(200)
                     .send({ status: 1, msg: "login successfull", data: mukhiyaData });
@@ -153,15 +157,19 @@ const mukhiyafatchHeadLine = async (req, res) => {
         return res.status(404).send({ status: 0, msg: "auth token not found" });
     }
     try {
-        const mukhiyaDetails = await mukhiya.findOne({
+        let mukhiyaDetails = await mukhiya.findOne({
             where: {
                 auth_token: auth_token,
             }
         });
+        mukhiyaDetails = mukhiyaDetails.dataValues ? mukhiyaDetails.dataValues : null
+
         if (!mukhiyaDetails) {
             return res.status(203).json({ error: "wrong authenticator" });
         } else {
-            const headLineData = await admin_headline.findAll({});
+            let headLineData = await admin_headline.findAll({});
+            headLineData = headLineData.dataValues ? headLineData.dataValues : null
+
             res
                 .status(200)
                 .send({ status: 1, msg: "head line detail", data: headLineData });
@@ -178,11 +186,13 @@ const editMukhiyaDetails = async (req, res) => {
     if (!auth_token) {
         return res.status(404).send({ status: 0, msg: "auth token not found" });
     }
-    const mukhiyaDetail = await mukhiya.findOne({
+    let mukhiyaDetail = await mukhiya.findOne({
         where: {
             auth_token: auth_token,
         },
     });
+    mukhiyaDetail = mukhiyaDetail.dataValues ? mukhiyaDetail.dataValues : null
+
 
     if (!mukhiyaDetail) {
         return res.status(203).json({ error: "wrong authenticator" });
@@ -355,11 +365,13 @@ const changePassword = async (req, res) => {
         return res.status(404).send({ status: 0, msg: "auth token not found" });
     }
 
-    const mukhiyaDetails = await mukhiya.findOne({
+    let mukhiyaDetails = await mukhiya.findOne({
         where: {
             auth_token: auth_token,
         },
     });
+    mukhiyaDetails = mukhiyaDetails.dataValues ? mukhiyaDetails.dataValues : null
+
     if (!mukhiyaDetails) {
         return res.status(203).json({ error: "wrong authenticator" });
     } else {
@@ -403,11 +415,13 @@ const fatchMukhiyaProfile = async (req, res) => {
         return res.status(404).send({ status: 0, msg: "auth token not found" });
     }
     try {
-        const mukhiyaDetails = await mukhiya.findOne({
+        let mukhiyaDetails = await mukhiya.findOne({
             where: {
                 auth_token: auth_token,
             },
         });
+        mukhiyaDetails = mukhiyaDetails.dataValues ? mukhiyaDetails.dataValues : null
+
         if (!mukhiyaDetails) {
             return res.status(203).json({ error: "wrong authenticator" });
         } else {
@@ -427,11 +441,12 @@ const addMembarDetails = async (req, res) => {
     if (!auth_token) {
         return res.status(404).send({ status: 0, msg: "auth token not found" });
     }
-    const mukhiyaDetail = await mukhiya.findOne({
+    let mukhiyaDetail = await mukhiya.findOne({
         where: {
             auth_token: auth_token,
         },
     });
+    mukhiyaDetail = mukhiyaDetail.dataValues ? mukhiyaDetail.dataValues : null
 
     if (!mukhiyaDetail) {
         return res.status(203).json({ error: "wrong authenticator" });
@@ -444,7 +459,7 @@ const addMembarDetails = async (req, res) => {
         } else {
             const data = response.value;
             console.log(mukhiyaDetail.business_adress);
-            const memberdetail = await member_detail.create({
+            let memberdetail = await member_detail.create({
                 mukhiya_auth_token: mukhiyaDetail.auth_token,
                 mukhiya_member_id: mukhiyaDetail.member_id,
                 member_name: data.member_name,
@@ -469,6 +484,7 @@ const addMembarDetails = async (req, res) => {
                 created_date: Date.now(),
                 updated_date: Date.now(),
             });
+            memberdetail = memberdetail.dataValues ? memberdetail.dataValues : null
 
             if (req.file) {
                 const random = Math.floor(Math.random() * 10000000);
@@ -495,11 +511,12 @@ const addMembarDetails = async (req, res) => {
                     },
                 }
             );
-            const memberData = await member_detail.findOne({
+            let memberData = await member_detail.findOne({
                 where: {
                     member_id: memberdetail.member_id,
                 },
             });
+            memberData = memberData.dataValues ? memberData.dataValues : null
 
             res
                 .status(200)
@@ -519,11 +536,12 @@ const editMemberDetails = async (req, res) => {
     if (!auth_token) {
         return res.status(404).send({ status: 0, msg: "auth token not found" });
     }
-    const mukhiyaDetail = await mukhiya.findOne({
+    let mukhiyaDetail = await mukhiya.findOne({
         where: {
             auth_token: auth_token,
         },
     });
+    mukhiyaDetail = mukhiyaDetail.dataValues ? mukhiyaDetail.dataValues : null
 
     if (!mukhiyaDetail) {
         return res.status(203).json({ error: "wrong authenticator" });
@@ -535,12 +553,12 @@ const editMemberDetails = async (req, res) => {
             return res.status(200).send({ status: 0, msg: response.error.message });
         } else {
             const data = response.value;
-            const memberDetail = await member_detail.findOne({
+            let memberDetail = await member_detail.findOne({
                 where: {
                     member_id: data.member_id,
                 },
             });
-
+            memberDetail = memberDetail.dataValues ? memberDetail.dataValues : null
             if (!memberDetail) {
                 return res.status(404).send({ status: 0, msg: "member not found" });
             } else {
@@ -684,11 +702,12 @@ const editMemberDetails = async (req, res) => {
                     }
                 );
 
-                const memberData = await member_detail.findOne({
+                let memberData = await member_detail.findOne({
                     where: {
                         member_id: data.member_id,
                     },
                 });
+                memberData = memberData.dataValues ? memberData.dataValues : null
                 res
                     .status(200)
                     .send({
@@ -708,20 +727,22 @@ const removeMemberById = async (req, res) => {
         return res.status(404).send({ status: 0, msg: "auth token not found" });
     }
     try {
-        const mukhiyaDetail = await mukhiya.findOne({
+        let mukhiyaDetail = await mukhiya.findOne({
             where: {
                 auth_token: auth_token,
             },
         });
+        mukhiyaDetail = mukhiyaDetail.dataValues ? mukhiyaDetail.dataValues : null
+
         if (!mukhiyaDetail) {
             return res.status(203).json({ error: "wrong authenticator" });
         } else {
-            const memberDetail = await member_detail.findOne({
+            let memberDetail = await member_detail.findOne({
                 where: {
                     member_id: member_id,
                 },
             });
-
+            memberDetail = memberDetail.dataValues ? memberDetail.dataValues : null
             if (!memberDetail) {
                 return res.status(404).json({ error: "please enter valid member id" });
             } else {
@@ -751,15 +772,18 @@ const mukhiyafatchAllSliderImages = async (req, res) => {
         return res.status(404).send({ status: 0, msg: "auth token not found" });
     }
     try {
-        const adminDetail = await mukhiya.findOne({
+        let adminDetail = await mukhiya.findOne({
             where: {
                 auth_token: auth_token,
             },
         });
+        adminDetail = adminDetail.dataValues ? adminDetail.dataValues : null
         if (!adminDetail) {
             return res.status(203).json({ error: "wrong authenticator" });
         } else {
-            const sliderImageData = await slider.findAll({});
+            let sliderImageData = await slider.findAll({});
+            sliderImageData = sliderImageData.dataValues ? sliderImageData.dataValues : null
+
             res
                 .status(200)
                 .send(sliderImageData);
