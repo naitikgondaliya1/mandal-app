@@ -94,7 +94,7 @@ const mukhiyaLogin = async (req, res) => {
                         member_id: data.member_id,
                     },
                 });
-                mukhiyaDetails = mukhiyaDetails.dataValues ? mukhiyaDetails.dataValues : null
+                mukhiyaDetails = mukhiyaDetails?.dataValues ? mukhiyaDetails?.dataValues : null
 
                 if (!mukhiyaDetails) {
                     return res.status(404).json({ error: "User does not found" });
@@ -138,7 +138,7 @@ const mukhiyaLogin = async (req, res) => {
                     },
                     attributes: ["auth_token"],
                 });
-                mukhiyaData = mukhiyaData.dataValues ? mukhiyaData.dataValues : null
+                mukhiyaData = mukhiyaData?.dataValues ? mukhiyaData?.dataValues : null
 
                 res
                     .status(200)
@@ -162,13 +162,13 @@ const mukhiyafatchHeadLine = async (req, res) => {
                 auth_token: auth_token,
             }
         });
-        mukhiyaDetails = mukhiyaDetails.dataValues ? mukhiyaDetails.dataValues : null
+        mukhiyaDetails = mukhiyaDetails?.dataValues ? mukhiyaDetails?.dataValues : null
 
         if (!mukhiyaDetails) {
             return res.status(203).json({ error: "wrong authenticator" });
         } else {
             let headLineData = await admin_headline.findAll({});
-            headLineData = headLineData.dataValues ? headLineData.dataValues : null
+            headLineData = headLineData?.dataValues ? headLineData?.dataValues : null
 
             res
                 .status(200)
@@ -191,7 +191,7 @@ const editMukhiyaDetails = async (req, res) => {
             auth_token: auth_token,
         },
     });
-    mukhiyaDetail = mukhiyaDetail.dataValues ? mukhiyaDetail.dataValues : null
+    mukhiyaDetail = mukhiyaDetail?.dataValues ? mukhiyaDetail?.dataValues : null
 
 
     if (!mukhiyaDetail) {
@@ -370,7 +370,7 @@ const changePassword = async (req, res) => {
             auth_token: auth_token,
         },
     });
-    mukhiyaDetails = mukhiyaDetails.dataValues ? mukhiyaDetails.dataValues : null
+    mukhiyaDetails = mukhiyaDetails?.dataValues ? mukhiyaDetails?.dataValues : null
 
     if (!mukhiyaDetails) {
         return res.status(203).json({ error: "wrong authenticator" });
@@ -420,7 +420,7 @@ const fatchMukhiyaProfile = async (req, res) => {
                 auth_token: auth_token,
             },
         });
-        mukhiyaDetails = mukhiyaDetails.dataValues ? mukhiyaDetails.dataValues : null
+        mukhiyaDetails = mukhiyaDetails?.dataValues ? mukhiyaDetails?.dataValues : null
 
         if (!mukhiyaDetails) {
             return res.status(203).json({ error: "wrong authenticator" });
@@ -446,7 +446,7 @@ const addMembarDetails = async (req, res) => {
             auth_token: auth_token,
         },
     });
-    mukhiyaDetail = mukhiyaDetail.dataValues ? mukhiyaDetail.dataValues : null
+    mukhiyaDetail = mukhiyaDetail?.dataValues ? mukhiyaDetail?.dataValues : null
 
     if (!mukhiyaDetail) {
         return res.status(203).json({ error: "wrong authenticator" });
@@ -484,7 +484,7 @@ const addMembarDetails = async (req, res) => {
                 created_date: Date.now(),
                 updated_date: Date.now(),
             });
-            memberdetail = memberdetail.dataValues ? memberdetail.dataValues : null
+            memberdetail = memberdetail?.dataValues ? memberdetail?.dataValues : null
 
             if (req.file) {
                 const random = Math.floor(Math.random() * 10000000);
@@ -516,7 +516,7 @@ const addMembarDetails = async (req, res) => {
                     member_id: memberdetail.member_id,
                 },
             });
-            memberData = memberData.dataValues ? memberData.dataValues : null
+            memberData = memberData?.dataValues ? memberData?.dataValues : null
 
             res
                 .status(200)
@@ -541,7 +541,7 @@ const editMemberDetails = async (req, res) => {
             auth_token: auth_token,
         },
     });
-    mukhiyaDetail = mukhiyaDetail.dataValues ? mukhiyaDetail.dataValues : null
+    mukhiyaDetail = mukhiyaDetail?.dataValues ? mukhiyaDetail?.dataValues : null
 
     if (!mukhiyaDetail) {
         return res.status(203).json({ error: "wrong authenticator" });
@@ -558,7 +558,7 @@ const editMemberDetails = async (req, res) => {
                     member_id: data.member_id,
                 },
             });
-            memberDetail = memberDetail.dataValues ? memberDetail.dataValues : null
+            memberDetail = memberDetail?.dataValues ? memberDetail?.dataValues : null
             if (!memberDetail) {
                 return res.status(404).send({ status: 0, msg: "member not found" });
             } else {
@@ -707,7 +707,7 @@ const editMemberDetails = async (req, res) => {
                         member_id: data.member_id,
                     },
                 });
-                memberData = memberData.dataValues ? memberData.dataValues : null
+                memberData = memberData?.dataValues ? memberData?.dataValues : null
                 res
                     .status(200)
                     .send({
@@ -732,7 +732,7 @@ const removeMemberById = async (req, res) => {
                 auth_token: auth_token,
             },
         });
-        mukhiyaDetail = mukhiyaDetail.dataValues ? mukhiyaDetail.dataValues : null
+        mukhiyaDetail = mukhiyaDetail?.dataValues ? mukhiyaDetail?.dataValues : null
 
         if (!mukhiyaDetail) {
             return res.status(203).json({ error: "wrong authenticator" });
@@ -742,7 +742,7 @@ const removeMemberById = async (req, res) => {
                     member_id: member_id,
                 },
             });
-            memberDetail = memberDetail.dataValues ? memberDetail.dataValues : null
+            memberDetail = memberDetail?.dataValues ? memberDetail?.dataValues : null
             if (!memberDetail) {
                 return res.status(404).json({ error: "please enter valid member id" });
             } else {
@@ -777,12 +777,12 @@ const mukhiyafatchAllSliderImages = async (req, res) => {
                 auth_token: auth_token,
             },
         });
-        adminDetail = adminDetail.dataValues ? adminDetail.dataValues : null
+        adminDetail = adminDetail?.dataValues ? adminDetail?.dataValues : null
         if (!adminDetail) {
             return res.status(203).json({ error: "wrong authenticator" });
         } else {
             let sliderImageData = await slider.findAll({});
-            sliderImageData = sliderImageData.dataValues ? sliderImageData.dataValues : null
+            sliderImageData = sliderImageData?.dataValues ? sliderImageData?.dataValues : null
 
             res
                 .status(200)
