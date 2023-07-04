@@ -448,20 +448,19 @@ const addMembarDetails = async (req, res) => {
     });
     mukhiyaDetail = mukhiyaDetail?.dataValues ? mukhiyaDetail?.dataValues : null
 
-    if (!mukhiyaDetail) {
-        return res.status(203).json({ error: "wrong authenticator" });
-    }
+    // if (!mukhiyaDetail) {
+    //     return res.status(203).json({ error: "wrong authenticator" });
+    // }
 
-    if (mukhiyaDetail) {
+    // if (mukhiyaDetail) {
         const response = validation.addMembarDetails(req.body);
-        if (response.error) {
-            return res.status(200).send({ status: 0, msg: response.error.message });
-        } else {
+    //     if (response.error) {
+    //         return res.status(200).send({ status: 0, msg: response.error.message });
+    //     } else {
             const data = response.value;
-            console.log(mukhiyaDetail.business_adress);
+            // console.log(mukhiyaDetail.business_adress);
             let memberdetail = await member_detail.create({
-                mukhiya_auth_token: mukhiyaDetail.auth_token,
-                mukhiya_member_id: mukhiyaDetail.member_id,
+                mukhiya_member_id: "1",
                 member_name: data.member_name,
                 member_mobile_no: data.member_mobile_no,
                 middle_name: data.middle_name,
@@ -525,8 +524,8 @@ const addMembarDetails = async (req, res) => {
                     msg: "add member details successfull",
                     data: memberData,
                 });
-        }
-    }
+        // }
+    // }
 };
 
 const editMemberDetails = async (req, res) => {

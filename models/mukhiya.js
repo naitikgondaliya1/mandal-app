@@ -71,6 +71,11 @@ module.exports = (sequelize, DataTypes) => {
             values: ['MARRIED', 'UNMARRIED'],
             defaultValue: 'MARRIED'
         },
+        gender: {
+            type: DataTypes.ENUM,
+            values: ['MALE', 'FEMALE'],
+            defaultValue: 'MALE'
+        },
         education: {
             type: DataTypes.TEXT,
             allowNull: true,
