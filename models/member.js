@@ -64,7 +64,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         marriage_status: {
             type: DataTypes.ENUM,
-            values: ['MARRIED', 'UNMARRIED'],
+            values: ['MARRIED', 'UNMARRIED', "DIVORCE", "widow"],
             defaultValue: 'MARRIED'
         },
         gender: {

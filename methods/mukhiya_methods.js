@@ -792,6 +792,78 @@ const mukhiyafatchAllSliderImages = async (req, res) => {
     }
 };
 
+const mukhiyaProfilePhoto = async (req, res) => {
+    try {
+      const auth_token = req.headers["auth-token"];
+      const publicDirectoryPath = path.join(__dirname,'..', 'public');
+      const filename = req.params.filename;
+      const imagePath = path.join(publicDirectoryPath, 'mukhiya_profile_image', filename);
+  
+      if (!auth_token) {
+        return res.status(404).send({ status: 0, msg: "auth token not found" });
+      }
+  
+      const tokenData = verifyJwt(auth_token);
+      let adminDetail = await admin.findOne({
+        where: {
+          auth_token: auth_token,
+        },
+      });
+  
+      let mukhiyaDetails = await mukhiya.findOne({
+        where: {
+          member_id: tokenData,
+        },
+      });
+      adminDetail = adminDetail?.dataValues ? adminDetail?.dataValues : null;
+      mukhiyaDetails = mukhiyaDetails?.dataValues
+        ? mukhiyaDetails?.dataValues
+        : null;
+  
+      let verifyUser = adminDetail ? adminDetail : mukhiyaDetails;
+      if (!verifyUser) {
+        return res.status(203).json({ error: "wrong authenticator" });
+      }
+  
+    // Check if the file exists
+    if (fs.existsSync(imagePath)) {
+      // Determine the file extension
+      const ext = path.extname(imagePath).toLowerCase();
+  
+      // Set the appropriate content type based on the file extension
+      let contentType;
+      if (ext === '.jpg' || ext === '.jpeg') {
+        contentType = 'image/jpeg';
+      } else if (ext === '.png') {
+        contentType = 'image/png';
+      } else {
+        res.status(400).send('Invalid file format');
+        return;
+      }
+  
+      // Read the file and send it in the response
+      fs.readFile(imagePath, (err, data) => {
+        if (err) {
+          res.status(500).send('Internal server error');
+        } else {
+          res.set('Content-Type', contentType);
+          res.send(data);
+        }
+      });
+    } else {
+      res.status(404).send('File not found');
+    }
+      // return res.status(200).send({
+      //   status: 1,
+      //   msg: "fetch member by id successfull",
+      //   data: memberData,
+      // });
+    } catch (error) {
+      console.log("==error===", error)
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+};
+
 module.exports = {
     mukhiyaLogin,
     mukhiyafatchHeadLine,
@@ -802,4 +874,5 @@ module.exports = {
     editMemberDetails,
     removeMemberById,
     mukhiyafatchAllSliderImages,
+    mukhiyaProfilePhoto
 };

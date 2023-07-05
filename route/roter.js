@@ -4,6 +4,8 @@ module.exports = function (app) {
     const admin_methods = require("../methods/admin_methods");
     const mukhiya_methods = require("../methods/mukhiya_methods");
     const {totalMemberDirecter, villageMember, memberGet, memberProfile} = require('../methods/member_directore_methods')
+    const {unMarriedMember, allVillage, memberByBlood, getImage} = require('../methods/member') 
+    const { addCommityMember, getCommityMember } = require('../methods/cammity')
 
 
     const middleware = require("../middleware/headermiddleware");
@@ -48,11 +50,28 @@ module.exports = function (app) {
     app.get("/api/headline/mukhiya_fatch_headline", mukhiya_methods.mukhiyafatchHeadLine);
     //// Admin Login http://localhost:5000/api/slider/mukhiya_fatch_all_slider_imgs
     app.get("/api/slider/mukhiya_fatch_all_slider_imgs", mukhiya_methods.mukhiyafatchAllSliderImages);
-
+    app.get("/api/mukhiya/profile/photo/:filename", mukhiya_methods.mukhiyaProfilePhoto)
 
      ////******************** member apis ******************////
      app.get("/api/totalMemberDirecter", totalMemberDirecter)
      app.get('/api/village/members', villageMember)
      app.get('/api/member/get', memberGet)
      app.get('/api/member/profile/photo/:filename', memberProfile)
+     app.get('/api/unMarriedMember', unMarriedMember)
+
+     ////******************** cammity member add ******************////
+    app.post('/api/cammitymember/add', addCommityMember)
+
+    app.get('/api/commitymember', getCommityMember)
+
+
+    ///############### Member by blood GROUP #################### ///
+    app.get('/api/member/blood', memberByBlood)
+
+    ///@@@@@@@@@@@@@@@@@  ALL VILLAGE ##################################### ///
+    app.get('/api/village', allVillage)
+
+
+    ///#########################  get any image ###################################//
+    app.get('/api/image', getImage)
 }
