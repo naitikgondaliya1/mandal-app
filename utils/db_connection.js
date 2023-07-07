@@ -37,6 +37,7 @@ db.mukhiya = require("../models/mukhiya.js")(sequelize, DataTypes);
 db.slider = require("../models/slider.js")(sequelize, DataTypes);
 db.member_detail = require("../models/member.js")(sequelize, DataTypes);
 db.cammity_member = require("../models/cammity_member.js")(sequelize, DataTypes)
+db.event = require("../models/event.js")(sequelize, DataTypes)
 
 sequelize.sync({ force: false, alter: true })
 

@@ -1,10 +1,12 @@
+const { createEvent, updloadPhoto, getEvent } = require("../methods/event_methods");
+
 module.exports = function (app) {
 
 
     const admin_methods = require("../methods/admin_methods");
     const mukhiya_methods = require("../methods/mukhiya_methods");
     const {totalMemberDirecter, villageMember, memberGet, memberProfile} = require('../methods/member_directore_methods')
-    const {unMarriedMember, allVillage, memberByBlood, getImage} = require('../methods/member') 
+    const {unMarriedMember, allVillage, memberByBlood, getImage, getMemberById} = require('../methods/member') 
     const { addCommityMember, getCommityMember } = require('../methods/cammity')
 
 
@@ -51,6 +53,7 @@ module.exports = function (app) {
     //// Admin Login http://localhost:5000/api/slider/mukhiya_fatch_all_slider_imgs
     app.get("/api/slider/mukhiya_fatch_all_slider_imgs", mukhiya_methods.mukhiyafatchAllSliderImages);
     app.get("/api/mukhiya/profile/photo/:filename", mukhiya_methods.mukhiyaProfilePhoto)
+    app.get("/api/mukhiya/family", mukhiya_methods.getMukhiyaFamily)
 
      ////******************** member apis ******************////
      app.get("/api/totalMemberDirecter", totalMemberDirecter)
@@ -58,6 +61,7 @@ module.exports = function (app) {
      app.get('/api/member/get', memberGet)
      app.get('/api/member/profile/photo/:filename', memberProfile)
      app.get('/api/unMarriedMember', unMarriedMember)
+     app.get('/api/memberById',getMemberById)
 
      ////******************** cammity member add ******************////
     app.post('/api/cammitymember/add', addCommityMember)
@@ -74,4 +78,10 @@ module.exports = function (app) {
 
     ///#########################  get any image ###################################//
     app.get('/api/image', getImage)
+
+
+    /// #################### event APIS ############################ //
+    app.post('/api/event/add', middleware.upload3.single("event_profile"), createEvent)
+    app.post('/api/event/photo', middleware.upload3.single("event"), updloadPhoto)
+    app.get('/api/event/get', getEvent)
 }

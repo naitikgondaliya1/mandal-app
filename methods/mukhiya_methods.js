@@ -434,6 +434,36 @@ const fatchMukhiyaProfile = async (req, res) => {
     }
 };
 
+
+const getMukhiyaFamily = async (req, res) => {
+    const auth_token = req.headers["auth-token"];
+
+    if (!auth_token) {
+        return res.status(404).send({ status: 0, msg: "auth token not found" });
+    }
+    try {
+        let mukhiyaDetails = await mukhiya.findOne({
+            where: {
+                auth_token: auth_token,
+            },
+        });
+        mukhiyaDetails = mukhiyaDetails?.dataValues ? mukhiyaDetails?.dataValues : null
+        if (!mukhiyaDetails) {
+            return res.status(203).json({ error: "wrong authenticator" });
+        } else {
+            let memberDetails = await db.sequelize.query(` select * from member_details where mukhiya_member_id =  '${mukhiyaDetails?.mukhiya_id}'`)
+            memberDetails = memberDetails[0].length > 0 ? memberDetails[0] : null
+
+            res
+                .status(200)
+                .send({ status: 1, msg: "member details fetch successFully", data: memberDetails });
+        }
+    } catch (error) {
+        console.log("======error=====", error)
+        res.status(500).send("Internal Server Error");
+    }
+};
+
 const addMembarDetails = async (req, res) => {
     const memberDetails = req.body;
     var auth_token = req.headers["auth-token"];
@@ -874,5 +904,6 @@ module.exports = {
     editMemberDetails,
     removeMemberById,
     mukhiyafatchAllSliderImages,
-    mukhiyaProfilePhoto
+    mukhiyaProfilePhoto,
+    getMukhiyaFamily
 };

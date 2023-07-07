@@ -60,11 +60,28 @@ const storage2 = multer.diskStorage({
 
 const upload2 = multer({ storage: storage2 })
 
+const storage3 = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/event')
+    },
+    filename: function (req, file, cb) {
+        let extArray = file.mimetype.split("/");
+        let extension = extArray[extArray.length - 1];
+        if (extension == "jpg" || extension == "jpeg" || extension == "png") {
+            cb(null, file.originalname)
+        } else {
+            cb(null, "file formate not allow")
+        }
+    }
+})
+
+const upload3 = multer({ storage: storage3 })
 
 
 
 module.exports = {
     upload,
     upload1,
-    upload2
+    upload2,
+    upload3
 }
