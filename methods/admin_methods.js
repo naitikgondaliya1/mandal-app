@@ -293,7 +293,7 @@ const addsliderImage = async (req, res) => {
     }
 
     const sliderImage = await slider.create({
-      slider_photo: file_name,
+      slider_photo:  `slider_images/${file_name}`,
       is_deleted: 0,
       created_date: Date.now(),
       updated_date: Date.now(),

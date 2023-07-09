@@ -1,4 +1,8 @@
+const { createAdvertisement, getadvertisement } = require("../methods/advertisement_method");
+const { createBusiness, getBusiness, updateBusiness } = require("../methods/business_method");
 const { createEvent, updloadPhoto, getEvent } = require("../methods/event_methods");
+const { createNews, getNews } = require("../methods/news");
+const { createSuchna, getSuchna, deleteSuchna } = require("../methods/suchna_methos");
 
 module.exports = function (app) {
 
@@ -84,4 +88,26 @@ module.exports = function (app) {
     app.post('/api/event/add', middleware.upload3.single("event_profile"), createEvent)
     app.post('/api/event/photo', middleware.upload3.single("event"), updloadPhoto)
     app.get('/api/event/get', getEvent)
+
+
+
+    /// ########################## suchna API ##############################
+    app.post('/api/suchna/create',middleware.suchnaPhoto.single("photo") ,createSuchna)
+    app.get('/api/suchna/get', getSuchna)
+    app.delete("/api/suchna/delete/:suchnaId", deleteSuchna)
+
+
+    /// ############################### Advertisement APIS ######################
+    app.post('/api/advertisement/create',middleware.advertisementPhoto.single("photo"),createAdvertisement)
+    app.get('/api/advertisement/get',getadvertisement)
+
+        /// ############################### Advertisement APIS ######################
+        app.post('/api/business/create',middleware.businessPhoto.single("photo"),createBusiness)
+        app.get('/api/business/get',getBusiness)
+        app.patch('/api/business/update/:businessId',updateBusiness)
+
+    /// ############################### news APIS ######################
+    app.post('/api/news/create',middleware.newsPhoto.single("photo"),createNews)
+    app.get('/api/news/get',getNews)
+    
 }

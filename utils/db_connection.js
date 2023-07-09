@@ -38,6 +38,11 @@ db.slider = require("../models/slider.js")(sequelize, DataTypes);
 db.member_detail = require("../models/member.js")(sequelize, DataTypes);
 db.cammity_member = require("../models/cammity_member.js")(sequelize, DataTypes)
 db.event = require("../models/event.js")(sequelize, DataTypes)
+db.suchna = require("../models/suchna.js")(sequelize, DataTypes)
+db.advertisement = require("../models/advertisement.js")(sequelize, DataTypes)
+db.news = require("../models/news.js")(sequelize, DataTypes)
+db.business = require("../models/business.js")(sequelize, DataTypes)
+db.motivation = require("../models/motivation.js")(sequelize, DataTypes)
 
 sequelize.sync({ force: false, alter: true })
 

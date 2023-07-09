@@ -47,7 +47,6 @@ const createEvent = async (req, res) => {
     }
 
     let memberdetail = await event.create({
-      mukhiya_member_id: "1",
       profile_photo: `event/${file_name}`,
       notes: notes ? notes : null,
       year: year ? year : null,

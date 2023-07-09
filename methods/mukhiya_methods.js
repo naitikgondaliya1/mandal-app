@@ -436,32 +436,47 @@ const fatchMukhiyaProfile = async (req, res) => {
 
 
 const getMukhiyaFamily = async (req, res) => {
-    const auth_token = req.headers["auth-token"];
+  const auth_token = req.headers["auth-token"];
+  const year = req?.query?.year
 
-    if (!auth_token) {
-        return res.status(404).send({ status: 0, msg: "auth token not found" });
-    }
-    try {
-        let mukhiyaDetails = await mukhiya.findOne({
-            where: {
-                auth_token: auth_token,
-            },
+  if (!auth_token) {
+    return res.status(404).send({ status: 0, msg: "auth token not found" });
+  }
+  try {
+    let mukhiyaDetails = await mukhiya.findOne({
+      where: {
+        auth_token: auth_token,
+      },
+    });
+    mukhiyaDetails = mukhiyaDetails?.dataValues
+      ? mukhiyaDetails?.dataValues
+      : null;
+    if (!mukhiyaDetails) {
+      return res.status(203).json({ error: "wrong authenticator" });
+    } else {
+      let whereCondition = "";
+      if (year) {
+        whereCondition = ` AND EXTRACT(YEAR FROM created_date) =  ${year}`;
+      }
+      const query = ` select * from member_details where mukhiya_member_id ='${mukhiyaDetails?.mukhiya_id}' ${whereCondition}`
+      console.log("=====query=====", query)
+      let memberDetails = await db.sequelize.query(
+        query
+      );
+      memberDetails = memberDetails[0].length > 0 ? memberDetails[0] : null;
+
+      res
+        .status(200)
+        .send({
+          status: 1,
+          msg: "member details fetch successFully",
+          data: memberDetails,
         });
-        mukhiyaDetails = mukhiyaDetails?.dataValues ? mukhiyaDetails?.dataValues : null
-        if (!mukhiyaDetails) {
-            return res.status(203).json({ error: "wrong authenticator" });
-        } else {
-            let memberDetails = await db.sequelize.query(` select * from member_details where mukhiya_member_id =  '${mukhiyaDetails?.mukhiya_id}'`)
-            memberDetails = memberDetails[0].length > 0 ? memberDetails[0] : null
-
-            res
-                .status(200)
-                .send({ status: 1, msg: "member details fetch successFully", data: memberDetails });
-        }
-    } catch (error) {
-        console.log("======error=====", error)
-        res.status(500).send("Internal Server Error");
     }
+  } catch (error) {
+    console.log("======error=====", error);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
 const addMembarDetails = async (req, res) => {
@@ -801,21 +816,34 @@ const mukhiyafatchAllSliderImages = async (req, res) => {
         return res.status(404).send({ status: 0, msg: "auth token not found" });
     }
     try {
-        let adminDetail = await mukhiya.findOne({
-            where: {
-                auth_token: auth_token,
-            },
-        });
-        adminDetail = adminDetail?.dataValues ? adminDetail?.dataValues : null
-        if (!adminDetail) {
-            return res.status(203).json({ error: "wrong authenticator" });
-        } else {
-            let sliderImageData = await slider.findAll({});
-            sliderImageData = sliderImageData?.dataValues ? sliderImageData?.dataValues : null
-
+      const tokenData = verifyJwt(auth_token);
+      let adminDetail = await admin.findOne({
+        where: {
+          auth_token: auth_token,
+        },
+      });
+  
+      let mukhiyaDetails = await mukhiya.findOne({
+        where: {
+          member_id: tokenData,
+        },
+      });
+      adminDetail = adminDetail?.dataValues ? adminDetail?.dataValues : null;
+      mukhiyaDetails = mukhiyaDetails?.dataValues
+        ? mukhiyaDetails?.dataValues
+        : null;
+  
+      let verifyUser = adminDetail ? adminDetail : mukhiyaDetails;
+      if (!verifyUser) {
+        return res.status(203).json({ error: "wrong authenticator" });
+      } else {
+            let sliderImageData = await db.sequelize.query(
+                `select * from sliders`
+              );
+           
             res
                 .status(200)
-                .send(sliderImageData);
+                .send({sliderImageData: sliderImageData[0] ? sliderImageData[0] : null});
         }
     } catch (error) {
         res.status(500).send("Internal Server Error");
@@ -893,6 +921,14 @@ const mukhiyaProfilePhoto = async (req, res) => {
       res.status(500).send({ message: "Internal Server Error" });
     }
 };
+
+const verifyJwt = (token) => {
+    try {
+      return jwt.verify(token, process.env.SECRET_KEY);
+    } catch (error) {
+      throw error;
+    }
+  };
 
 module.exports = {
     mukhiyaLogin,
