@@ -1,8 +1,8 @@
 module.exports = (sequelize, DataTypes) => {
-  const motivation = sequelize.define(
-    "motivation",
+  const prayojak = sequelize.define(
+    "prayojak",
     {
-      motivation_id: {
+      prayojak_id: {
         type: DataTypes.BIGINT,
         autoIncrement: true,
         primaryKey: true,
@@ -11,11 +11,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      notes: {
+      name: {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      motivation_id: {
+      mobile_no: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      role: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      village: {
         type: DataTypes.TEXT,
         allowNull: true,
       },
@@ -30,5 +38,5 @@ module.exports = (sequelize, DataTypes) => {
     },
     { timestamps: false }
   );
-  return motivation;
+  return prayojak;
 };

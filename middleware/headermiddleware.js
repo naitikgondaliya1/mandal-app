@@ -147,6 +147,40 @@ const news = multer.diskStorage({
 
 const newsPhoto = multer({storage: news}) 
 
+const motivation = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/motivation')
+    },
+    filename: function (req, file, cb) {
+        let extArray = file.mimetype.split("/");
+        let extension = extArray[extArray.length - 1];
+        if (extension == "jpg" || extension == "jpeg" || extension == "png") {
+            cb(null, file.originalname)
+        } else {
+            cb(null, "file formate not allow")
+        }
+    }
+})
+
+const motivationPhoto = multer({storage: motivation}) 
+
+const prayojak = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/prayojak')
+    },
+    filename: function (req, file, cb) {
+        let extArray = file.mimetype.split("/");
+        let extension = extArray[extArray.length - 1];
+        if (extension == "jpg" || extension == "jpeg" || extension == "png") {
+            cb(null, file.originalname)
+        } else {
+            cb(null, "file formate not allow")
+        }
+    }
+})
+
+const prayojakPhoto = multer({storage: prayojak}) 
+
 
 module.exports = {
     upload,
@@ -156,5 +190,7 @@ module.exports = {
     suchnaPhoto,
     advertisementPhoto,
     businessPhoto,
-    newsPhoto
+    newsPhoto,
+    motivationPhoto,
+    prayojakPhoto
 }

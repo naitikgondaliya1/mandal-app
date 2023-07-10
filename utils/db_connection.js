@@ -41,9 +41,9 @@ db.event = require("../models/event.js")(sequelize, DataTypes)
 db.suchna = require("../models/suchna.js")(sequelize, DataTypes)
 db.advertisement = require("../models/advertisement.js")(sequelize, DataTypes)
 db.news = require("../models/news.js")(sequelize, DataTypes)
+db.motivations = require("../models/motivations.js")(sequelize,DataTypes)
 db.business = require("../models/business.js")(sequelize, DataTypes)
-db.motivation = require("../models/motivation.js")(sequelize, DataTypes)
-
+db.prayojak = require("../models/prayojak.js")(sequelize, DataTypes)
 sequelize.sync({ force: false, alter: true })
 
 module.exports = db

@@ -1,7 +1,9 @@
 const { createAdvertisement, getadvertisement } = require("../methods/advertisement_method");
 const { createBusiness, getBusiness, updateBusiness } = require("../methods/business_method");
 const { createEvent, updloadPhoto, getEvent } = require("../methods/event_methods");
+const { createMotivation, getMotivation } = require("../methods/motivation");
 const { createNews, getNews } = require("../methods/news");
+const { createPrayojak, getPrayojak } = require("../methods/prayojak_methos");
 const { createSuchna, getSuchna, deleteSuchna } = require("../methods/suchna_methos");
 
 module.exports = function (app) {
@@ -109,5 +111,14 @@ module.exports = function (app) {
     /// ############################### news APIS ######################
     app.post('/api/news/create',middleware.newsPhoto.single("photo"),createNews)
     app.get('/api/news/get',getNews)
+
+    /// ######################## MOTIVATION APIS #######################
+    app.post('/api/motivation/create', middleware.motivationPhoto.single('photo'), createMotivation)
+    app.get('/api/motivation/get',getMotivation)
+
+    /// ########################## PRAYOJAK APIS ##############################
+    app.post('/api/prayojak/create', middleware.prayojakPhoto.single('photo'), createPrayojak)
+    app.get('/api/prayojak/get',getPrayojak)
+
     
 }
