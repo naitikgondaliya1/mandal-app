@@ -92,6 +92,52 @@ const unMarriedMember = async (req, res) => {
   }
 };
 
+const memberByStd = async (req, res) => {
+  try {
+    const auth_token = req.headers["auth-token"];
+    let education = req?.query?.education || null;
+  
+
+    if (!auth_token) {
+      return res.status(404).send({ status: 0, msg: "auth token not found" });
+    }
+
+    const tokenData = verifyJwt(auth_token);
+    let adminDetail = await admin.findOne({
+      where: {
+        auth_token: auth_token,
+      },
+    });
+
+    let mukhiyaDetails = await mukhiya.findOne({
+      where: {
+        member_id: tokenData,
+      },
+    });
+    adminDetail = adminDetail?.dataValues ? adminDetail?.dataValues : null;
+    mukhiyaDetails = mukhiyaDetails?.dataValues
+      ? mukhiyaDetails?.dataValues
+      : null;
+
+    let verifyUser = adminDetail ? adminDetail : mukhiyaDetails;
+    if (!verifyUser) {
+      return res.status(203).json({ error: "wrong authenticator" });
+    }
+
+    const query = `SELECT * FROM member_details where education = '${education}'`;
+    let memberData = await sequelize.query(query);
+    memberData = memberData[0] ? memberData[0] : [];
+    return res.status(200).send({
+      status: 1,
+      msg: "fetch all education member",
+      data: memberData,
+    });
+  } catch (error) {
+    console.log("==error===", error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+};
+
 const allVillage = async (req, res) => {
   try {
     const query = `SELECT village_name FROM member_details GROUP BY village_name`;
@@ -266,4 +312,51 @@ const getMemberById = async (req, res) => {
   }
 };
 
-module.exports = { unMarriedMember, allVillage, memberByBlood, getImage, getMemberById };
+const getAllMemberDetails = async (req, res) => {
+  const auth_token = req.headers["auth-token"];
+ 
+  try {
+  if (!auth_token) {
+    return res.status(404).send({ status: 0, msg: "auth token not found" });
+  }
+
+  const tokenData = verifyJwt(auth_token);
+  let adminDetail = await admin.findOne({
+    where: {
+      auth_token: auth_token,
+    },
+  });
+
+  let mukhiyaDetails = await mukhiya.findOne({
+    where: {
+      member_id: tokenData,
+    },
+  });
+  adminDetail = adminDetail?.dataValues ? adminDetail?.dataValues : null;
+  mukhiyaDetails = mukhiyaDetails?.dataValues
+    ? mukhiyaDetails?.dataValues
+    : null;
+
+  let verifyUser = adminDetail ? adminDetail : mukhiyaDetails;
+  if (!verifyUser) {
+    return res.status(203).json({ error: "wrong authenticator" });
+  }
+ 
+    let memberDetails = await member.findAll(
+     {raw:true}
+    );
+  
+    res
+      .status(200)
+      .send({
+        status: 1,
+        msg: "member details fetch successFully",
+        data: memberDetails ? memberDetails : null,
+      });
+  } catch (error) {
+    console.log("======error=====", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+module.exports = { unMarriedMember, allVillage, memberByBlood, getImage, getMemberById, getAllMemberDetails, memberByStd };

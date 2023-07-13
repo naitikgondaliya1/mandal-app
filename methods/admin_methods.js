@@ -11,7 +11,7 @@ const { Op, where } = require("sequelize");
 const { QueryTypes } = require("sequelize");
 const fs = require("fs");
 const { response } = require("express");
-const { ifError } = require("assert");
+const sequelize = db.sequelize;
 
 const adminLogin = async (req, res) => {
   const adminDetails = req.body;
@@ -170,11 +170,11 @@ const fatchHeadLine = async (req, res) => {
     if (!adminDetail) {
       return res.status(203).json({ error: "wrong authenticator" });
     } else {
-      let headLineData = await admin_headline.findAll({});
-      headLineData = headLineData?.dataValues ? headLineData?.dataValues : null
+      let headLineData =  await sequelize.query(`SELECT * from admin_headlines`);
+      // headLineData = headLineData ? headLineData?.dataValues : null
       res
         .status(200)
-        .send({ status: 1, msg: "head line detail", data: headLineData });
+        .send({ status: 1, msg: "head line detail", data: headLineData[0] });
     }
   } catch (error) {
     res.status(500).send("Internal Server Error");
@@ -258,6 +258,47 @@ const creatMember = async (req, res) => {
   }
 };
 
+const addheadLines = async (req, res) => {
+  const {headline} = req.body;
+  var auth_token = req.headers["auth-token"];
+
+  if (!auth_token) {
+    return res.status(404).send({ status: 0, msg: "auth token not found" });
+  }
+  let adminDetail = await admin.findOne({
+    where: {
+      auth_token: auth_token,
+    },
+  });
+  adminDetail = adminDetail?.dataValues ? adminDetail?.dataValues : null
+  if (!adminDetail) {
+    return res.status(203).json({ error: "wrong authenticator" });
+  }
+
+      await admin_headline.create({
+        headline: headline,
+        is_deleted: 0,
+        created_date: Date.now(),
+        updated_date: Date.now(),
+      });
+
+      let headlineData = await admin_headline.findOne({
+        where: {
+          headline: headline
+                },
+      });
+      headlineData = headlineData?.dataValues ? headlineData?.dataValues : null
+
+      res
+        .status(200)
+        .send({
+          status: 1,
+          msg: "create headlines successfull",
+          data: headlineData,
+        });
+  
+};
+
 const addsliderImage = async (req, res) => {
   const auth_token = req.headers["auth-token"];
   const file = req.file;
@@ -331,12 +372,11 @@ const fatchAllSliderImages = async (req, res) => {
     if (!adminDetail) {
       return res.status(203).json({ error: "wrong authenticator" });
     } else {
-      let sliderImageData = await slider.findAll({});
-      sliderImageData = sliderImageData?.dataValues ? sliderImageData?.dataValues : null
+      let sliderImageData = await sequelize.query(`SELECT * FROM public.sliders ORDER BY slider_id ASC `);
 
       res
         .status(200)
-        .send(sliderImageData);
+        .send({data: sliderImageData[0]});
     }
   } catch (error) {
     res.status(500).send("Internal Server Error");
@@ -493,10 +533,9 @@ const fatchAllMembers = async (req, res) => {
     if (!adminDetail) {
       return res.status(203).json({ error: "wrong authenticator" });
     } else {
-      let memberData = await mukhiya.findAll({});
-      memberData = memberData?.dataValues ? memberData?.dataValues : null
+      let memberData = await sequelize.query(`SELECT * from mukhiyas`);
 
-      res.status(200).send(memberData);
+      res.status(200).send({data:memberData[0]});
     }
   } catch (error) {
     res.status(500).send("Internal Server Error");
@@ -513,4 +552,5 @@ module.exports = {
   deleteSliderImageById,
   editMember,
   fatchAllMembers,
+  addheadLines
 };

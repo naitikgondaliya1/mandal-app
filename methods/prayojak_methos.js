@@ -120,4 +120,57 @@ const getPrayojak = async (req, res) => {
   }
 };
 
-module.exports = { createPrayojak, getPrayojak };
+const removePrayojak = async (req, res) => {
+  const auth_token = req.headers["auth-token"];
+  const id =  req?.params?.projakId
+  if (!id) {
+    return res.status(404).send({ status: 0, msg: "require pryojakId at path" });
+  }
+  if (!auth_token) {
+    return res.status(404).send({ status: 0, msg: "auth token not found" });
+  }
+  try {
+    const tokenData = verifyJwt(auth_token);
+    let adminDetail = await admin.findOne({
+      where: {
+        auth_token: auth_token,
+      },
+    });
+
+    let mukhiyaDetails = await mukhiya.findOne({
+      where: {
+        member_id: tokenData,
+      },
+    });
+    adminDetail = adminDetail?.dataValues ? adminDetail?.dataValues : null;
+    mukhiyaDetails = mukhiyaDetails?.dataValues
+      ? mukhiyaDetails?.dataValues
+      : null;
+
+    let verifyUser = adminDetail ? adminDetail : mukhiyaDetails;
+    if (!verifyUser) {
+      return res.status(203).json({ error: "wrong authenticator" });
+    }
+
+     
+    let prayojakData = await db.sequelize.query(
+      ` select *  from prayojaks where prayojak_id = ${id}`
+    );
+
+    if(prayojakData[0].length <= 0) {
+     return res.status(500).send({message:"prayojak not found"});
+    }
+
+    const query = ` delete  from prayojaks where prayojak_id = ${id}`
+    await db.sequelize.query(
+      query
+    );
+
+   return res.status(200).send({ message: `prayojak ${id} delete succssfully` });
+  } catch (error) {
+    console.log("=====error=====", error)
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+module.exports = { createPrayojak, getPrayojak, removePrayojak };

@@ -125,4 +125,56 @@ const getadvertisement = async (req, res) => {
   }
 };
 
-module.exports = { createAdvertisement, getadvertisement };
+const removeAdvertisement = async (req, res) => {
+  const auth_token = req.headers["auth-token"];
+  const id =  req?.params?.advertisementId
+  if (!id) {
+    return res.status(404).send({ status: 0, msg: "require advertisementId at path" });
+  }
+  if (!auth_token) {
+    return res.status(404).send({ status: 0, msg: "auth token not found" });
+  }
+  try {
+    const tokenData = verifyJwt(auth_token);
+    let adminDetail = await admin.findOne({
+      where: {
+        auth_token: auth_token,
+      },
+    });
+
+    let mukhiyaDetails = await mukhiya.findOne({
+      where: {
+        member_id: tokenData,
+      },
+    });
+    adminDetail = adminDetail?.dataValues ? adminDetail?.dataValues : null;
+    mukhiyaDetails = mukhiyaDetails?.dataValues
+      ? mukhiyaDetails?.dataValues
+      : null;
+
+    let verifyUser = adminDetail ? adminDetail : mukhiyaDetails;
+    if (!verifyUser) {
+      return res.status(203).json({ error: "wrong authenticator" });
+    }
+     
+    let advertisementsData = await db.sequelize.query(
+      ` select *  from advertisements where advertisement_id = ${id}`
+    );
+
+    if(advertisementsData[0].length <= 0) {
+     return res.status(500).send({message:"Advertisement not found"});
+    }
+
+    const query = ` delete  from advertisements where advertisement_id = ${id}`
+    await db.sequelize.query(
+      query
+    );
+
+   return res.status(200).send({ message: `removeAdvertisement ${id} delete succssfully` });
+  } catch (error) {
+    console.log("=====error=====", error)
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+module.exports = { createAdvertisement, getadvertisement, removeAdvertisement };

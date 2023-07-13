@@ -12,6 +12,7 @@ const { Op } = require("sequelize");
 const { QueryTypes } = require("sequelize");
 const fs = require("fs");
 const member = require("../models/member.js");
+const path = require("path")
 // const { response } = require("express");
 // const { ifError } = require("assert");
 
@@ -167,9 +168,8 @@ const mukhiyafatchHeadLine = async (req, res) => {
         if (!mukhiyaDetails) {
             return res.status(203).json({ error: "wrong authenticator" });
         } else {
-            let headLineData = await admin_headline.findAll({});
-            headLineData = headLineData?.dataValues ? headLineData?.dataValues : null
-
+            let headLineData = await admin_headline.findAll({raw: true});
+            headLineData = headLineData ? headLineData : []
             res
                 .status(200)
                 .send({ status: 1, msg: "head line detail", data: headLineData });
@@ -459,7 +459,6 @@ const getMukhiyaFamily = async (req, res) => {
         whereCondition = ` AND EXTRACT(YEAR FROM created_date) =  ${year}`;
       }
       const query = ` select * from member_details where mukhiya_member_id ='${mukhiyaDetails?.mukhiya_id}' ${whereCondition}`
-      console.log("=====query=====", query)
       let memberDetails = await db.sequelize.query(
         query
       );

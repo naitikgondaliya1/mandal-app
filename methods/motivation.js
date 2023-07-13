@@ -118,4 +118,56 @@ const getMotivation = async (req, res) => {
   }
 };
 
-module.exports = { createMotivation, getMotivation };
+const removeMotivation = async (req, res) => {
+  const auth_token = req.headers["auth-token"];
+  const id =  req?.params?.motivationId
+  if (!id) {
+    return res.status(404).send({ status: 0, msg: "require motivationId at path" });
+  }
+  if (!auth_token) {
+    return res.status(404).send({ status: 0, msg: "auth token not found" });
+  }
+  try {
+    const tokenData = verifyJwt(auth_token);
+    let adminDetail = await admin.findOne({
+      where: {
+        auth_token: auth_token,
+      },
+    });
+
+    let mukhiyaDetails = await mukhiya.findOne({
+      where: {
+        member_id: tokenData,
+      },
+    });
+    adminDetail = adminDetail?.dataValues ? adminDetail?.dataValues : null;
+    mukhiyaDetails = mukhiyaDetails?.dataValues
+      ? mukhiyaDetails?.dataValues
+      : null;
+
+    let verifyUser = adminDetail ? adminDetail : mukhiyaDetails;
+    if (!verifyUser) {
+      return res.status(203).json({ error: "wrong authenticator" });
+    }
+
+    let motivationsData = await db.sequelize.query(
+      ` select *  from motivations where motivation_id = ${id}`
+    );
+
+    if(motivationsData[0].length <= 0) {
+     return res.status(500).send({message:"motivations not found"});
+    }
+
+    const query = ` delete  from motivations where motivation_id = ${id}`
+    await db.sequelize.query(
+      query
+    );
+
+   return res.status(200).send({ message: `motivation ${id} delete succssfully` });
+  } catch (error) {
+    console.log("=====error=====", error)
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+module.exports = { createMotivation, getMotivation, removeMotivation };

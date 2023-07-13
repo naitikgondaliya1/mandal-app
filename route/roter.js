@@ -1,9 +1,9 @@
-const { createAdvertisement, getadvertisement } = require("../methods/advertisement_method");
-const { createBusiness, getBusiness, updateBusiness } = require("../methods/business_method");
-const { createEvent, updloadPhoto, getEvent } = require("../methods/event_methods");
-const { createMotivation, getMotivation } = require("../methods/motivation");
-const { createNews, getNews } = require("../methods/news");
-const { createPrayojak, getPrayojak } = require("../methods/prayojak_methos");
+const { createAdvertisement, getadvertisement, removeAdvertisement } = require("../methods/advertisement_method");
+const { createBusiness, getBusiness, updateBusiness, removeBusiness } = require("../methods/business_method");
+const { createEvent, updloadPhoto, getEvent, removeEvent } = require("../methods/event_methods");
+const { createMotivation, getMotivation, removeMotivation } = require("../methods/motivation");
+const { createNews, getNews, removeNews } = require("../methods/news");
+const { createPrayojak, getPrayojak, removePrayojak } = require("../methods/prayojak_methos");
 const { createSuchna, getSuchna, deleteSuchna } = require("../methods/suchna_methos");
 
 module.exports = function (app) {
@@ -12,8 +12,8 @@ module.exports = function (app) {
     const admin_methods = require("../methods/admin_methods");
     const mukhiya_methods = require("../methods/mukhiya_methods");
     const {totalMemberDirecter, villageMember, memberGet, memberProfile} = require('../methods/member_directore_methods')
-    const {unMarriedMember, allVillage, memberByBlood, getImage, getMemberById} = require('../methods/member') 
-    const { addCommityMember, getCommityMember } = require('../methods/cammity')
+    const {unMarriedMember, allVillage, memberByBlood, getImage, getMemberById, getAllMemberDetails, memberByStd} = require('../methods/member') 
+    const { addCommityMember, getCommityMember, removeCammityMember } = require('../methods/cammity')
 
 
     const middleware = require("../middleware/headermiddleware");
@@ -37,6 +37,7 @@ module.exports = function (app) {
     app.put("/api/slider/admin/edit_mukhya_member/:id", admin_methods.editMember);
     //// Admin Login http://localhost:5000/api/slider/admin/fatch_all_members
     app.get("/api/slider/admin/fatch_all_members", admin_methods.fatchAllMembers);
+    app.post("/api/headline/create", admin_methods.addheadLines)
 
 
     ////******************** mukhiyas apis ******************////
@@ -68,11 +69,12 @@ module.exports = function (app) {
      app.get('/api/member/profile/photo/:filename', memberProfile)
      app.get('/api/unMarriedMember', unMarriedMember)
      app.get('/api/memberById',getMemberById)
-
+     app.get('/api/memberdetails/getAll', getAllMemberDetails)
+     app.get('/api/member', memberByStd)
      ////******************** cammity member add ******************////
     app.post('/api/cammitymember/add', addCommityMember)
-
     app.get('/api/commitymember', getCommityMember)
+    app.delete('/api/commitymember/remove/:cammitymemberId', removeCammityMember)
 
 
     ///############### Member by blood GROUP #################### ///
@@ -90,6 +92,7 @@ module.exports = function (app) {
     app.post('/api/event/add', middleware.upload3.single("event_profile"), createEvent)
     app.post('/api/event/photo', middleware.upload3.single("event"), updloadPhoto)
     app.get('/api/event/get', getEvent)
+    app.delete('/api/event/remove/:eventId', removeEvent)
 
 
 
@@ -102,23 +105,28 @@ module.exports = function (app) {
     /// ############################### Advertisement APIS ######################
     app.post('/api/advertisement/create',middleware.advertisementPhoto.single("photo"),createAdvertisement)
     app.get('/api/advertisement/get',getadvertisement)
+    app.delete('/api/advertisement/remove/:advertisementId', removeAdvertisement)
 
         /// ############################### Advertisement APIS ######################
         app.post('/api/business/create',middleware.businessPhoto.single("photo"),createBusiness)
         app.get('/api/business/get',getBusiness)
         app.patch('/api/business/update/:businessId',updateBusiness)
+        app.delete('/api/business/remove/:businessId',removeBusiness)
 
     /// ############################### news APIS ######################
     app.post('/api/news/create',middleware.newsPhoto.single("photo"),createNews)
     app.get('/api/news/get',getNews)
+    app.delete('/api/news/remove/:newsId', removeNews)
 
     /// ######################## MOTIVATION APIS #######################
     app.post('/api/motivation/create', middleware.motivationPhoto.single('photo'), createMotivation)
     app.get('/api/motivation/get',getMotivation)
+    app.delete('/api/motivation/remove/:motivationId',removeMotivation)
 
     /// ########################## PRAYOJAK APIS ##############################
     app.post('/api/prayojak/create', middleware.prayojakPhoto.single('photo'), createPrayojak)
     app.get('/api/prayojak/get',getPrayojak)
+    app.delete('/api/prayojak/remove/:projakId', removePrayojak)
 
     
 }
